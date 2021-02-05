@@ -1,0 +1,21 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: factoryman
+spec:
+  replicas: 2
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: factoryman
+  template:
+    metadata:
+      labels:
+        app: factoryman
+        app.kubernetes.io/name: factoryman
+    spec:
+      containers:
+      - name: factoryman
+        image: gdekoenigsberg/factoryman:latest
+        ports:
+        - containerPort: 5000

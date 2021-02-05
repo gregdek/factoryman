@@ -1,2 +1,2 @@
-# factoryman
-A silly game for fun.
+# Factory Manager
+It's a very small game!
