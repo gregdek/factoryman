@@ -1,4 +1,6 @@
 from flask import Flask
+from flask import render_template
+from flask import Response
 import pprint
 import uuid
 import redis
@@ -44,9 +46,9 @@ def state(gameid):
   gamestatestr = ''
   gamestateset = r.smembers(gameid)
   for gamestateitem in gamestateset:
-    gamestatestr += str(gamestateitem) + str(r.get(gamestateitem)) + "\n"
-  print(gamestatestr, file=sys.stderr)
-  return(gamestatestr)
+    gamestatestr += "<p>" + str(gamestateitem) + str(r.get(gamestateitem)) + "</p>"
+  #print(gamestatestr, file=sys.stderr)
+  return gamestatestr, {'Content-Type': 'text/html'}
 
 @app.route('/command')
 def command():
