@@ -68,9 +68,13 @@ use counts instead of arrays and nested dicts. So:
 
 "gameid:cash"           How much cash does the player have?
 "gameid:wcount"         How many workers have been created? Starts at 1.
-"gameid:mcount"         How many machines? Starts at 0.
-"gameid:ccount"         How many carts? Starts at 0.
-"gamied:wid:active"     Is the worker active? For example, has he been sold?
-"gameid:cid:active"     Is the cart active, or has it been sold?
-"gameid:wid:n:x"        What's the worker's x position?
+"gameid:mcount"         How many machines to iterate thru? Starts at 0.
+"gameid:ccount"         How many carts to iterate thru? Starts at 0.
+"gameid:active:[wid]"   Is worker wid active, or have they been sold?
+"gameid:active:[cid]"   Is cart cid active, or has it been sold?
+"gameid:x:[wid]"        What's the x position of worker wid?
 
+Then I can store these using Redis sets: each gameid can be a set, and any
+key that's added to the database is also added to the set. So invoke sadd:
+r.sadd('gameid', 'gameid:key:tag') whenever you set a key/value pair. And
+since sets ignore duplicates, no check is needed!
