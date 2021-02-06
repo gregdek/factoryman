@@ -5,11 +5,8 @@ Factory Manager is a simple client/server game, with the simplest possible state
 ### Endpoints
 The following endpoints are available for client communication. The client renders the map and accepts commands; the endpoints evaluate moves, and communicate and store game state.
 * /newgame -- returns a unique gameid and a game state (an empty factory and some cash).
-* /gameid/state -- for the given gameid, returns the current game state.
-* /gameid/command/[xxx] -- for the given gameid, analyzes the command [xxx], updates the game state, and returns the updated game state.
-
-### Game State
-The game state consists of a set of objects and their location on a 10x10 map. I suppose the game state is stored as a tuple of a gameid and JSON. 
+* /state/gameid -- for the given gameid, returns the current game state.
+* /command/[xxx]/gameid -- for the given gameid, analyzes the command [xxx], updates the game state, and returns the updated game state.
 
 ### Game Objects
 The game objects are Workers, Carts, and Machines. Various simple actions can be performed by the player that can change the state of those objects. 
@@ -62,4 +59,18 @@ There are also widgets, but widgets are not objects in and of themselves; they a
   - Process any attached M.
 - Return game state.
 
+### Game State
+The final question is, how do we store all this data? We want to make sure
+that we've got a game state that's readable and stores all the things.
+
+For simplicity's sake, I think we avoid complex Python data structures and
+use counts instead of arrays and nested dicts. So:
+
+"gameid:cash"           How much cash does the player have?
+"gameid:wcount"         How many workers have been created? Starts at 1.
+"gameid:mcount"         How many machines? Starts at 0.
+"gameid:ccount"         How many carts? Starts at 0.
+"gamied:wid:active"     Is the worker active? For example, has he been sold?
+"gameid:cid:active"     Is the cart active, or has it been sold?
+"gameid:wid:n:x"        What's the worker's x position?
 
