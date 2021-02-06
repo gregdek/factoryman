@@ -19,6 +19,8 @@ There are also widgets, but widgets are not objects in and of themselves; they a
     * w.id is the count of the worker.
     * w.x is the x position of the worker on the map [0..9], changed by the "move" command. Can overlap 
     * w.y is the y position of the worker on the map [0..9], changed by the "move" command.
+    * w.dx is the xpos of the intended destination of the worker.
+    * w.dy is the ypos of the intended destination of the worker.
     * w.c is the cart the worker is attached to, if any, changed by the "attach" or "detach" command. See *Cart* for details.
     * w.m is the machine the worker is attached to, if any, changed by the "attach" or "detach" command. See *Machine* for details.
     * Workers cannot share coordinates with other W.
@@ -52,4 +54,12 @@ There are also widgets, but widgets are not objects in and of themselves; they a
     - The "sell" command sells whatever is at [9,9]: W, M, or contents of C. Fails if: no W, M, or C at [9,9].
 
 ### Game Loop
-FIXME.
+- Process command. If error, return without tick.
+- For each worker: 
+  - Process any attach or detach.
+  - Attempt to move W and any attached C or M. 
+  - If collision would result, do not move.
+  - Process any attached M.
+- Return game state.
+
+
