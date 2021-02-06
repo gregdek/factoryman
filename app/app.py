@@ -28,15 +28,15 @@ def newgame():
   # "set" starting values, and "sadd" values to Redis set for gameid.
   # TODO: put these into a newworker function.
   r.set(gameid+":cash", "5000")
-  r.set(gameid+":wcount", "1")
-  r.set(gameid+":active:0", "yes")
-  r.set(gameid+":x:0", "0")
-  r.set(gameid+":y:0", "0")
-  r.set(gameid+":dx:0", "0")
-  r.set(gameid+":dy:0", "0")
-  r.sadd(gameid, gameid+":cash", gameid+":wcount", gameid+":active:0")
-  r.sadd(gameid, gameid+":x:0", gameid+":y:0")
-  r.sadd(gameid, gameid+":dx:0", gameid+":dy:0")
+  r.set(gameid+":Wcount", "1")
+  r.set(gameid+":W:0:active", "yes")
+  r.set(gameid+":W:0:x", "0")
+  r.set(gameid+":W:0:y", "0")
+  r.set(gameid+":W:0:dx", "0")
+  r.set(gameid+":W:0:dy", "0")
+  r.sadd(gameid, gameid+":cash", gameid+":Wcount", gameid+"W:0:active")
+  r.sadd(gameid, gameid+"W:0:x", gameid+":W:0:y")
+  r.sadd(gameid, gameid+"W:0:dx", gameid+"W:0:dy")
 
   # FIXME: just return the newgameid for now, but figure out how to 
   # return game state also
@@ -50,6 +50,7 @@ def state(gameid):
     for gamestateitem in gamestateset:
       returnstr += "<p>"
       returnstr += str(gamestateitem)
+      returnstr += "---"
       returnstr += str(r.get(gamestateitem))
       returnstr += "</p>"
       #print(gamestatestr, file=sys.stderr)
@@ -72,12 +73,12 @@ def command(commandid, gameid):
     dx=commandid[5]
     dy=commandid[6]
     # Is the player active?
-    if r.get(gameid+":active:"+wid) == "yes":
+    if r.get(gameid+"W:"+wid+":active") == "yes":
       # Are x and y in bounds?
       if (0<=int(dx)<=9) and (0<=int(dy)<=9): 
         # Valid. Set destination and last command.
-        r.set(gameid+":dx:"+wid, dx)
-        r.set(gameid+":dy:"+wid, dy)
+        r.set(gameid+"W:"+wid+":dx", dx)
+        r.set(gameid+"W:"+wid+":dy", dy)
         r.set(gameid+":lastcmd",commandid)
       else:
         returnstr = "ERROR " + commandid + ": invalid xy"
