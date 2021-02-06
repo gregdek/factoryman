@@ -73,8 +73,17 @@ use counts instead of arrays and nested dicts. So:
 "gameid:active:[wid]"   Is worker wid active, or have they been sold?
 "gameid:active:[cid]"   Is cart cid active, or has it been sold?
 "gameid:x:[wid]"        What's the x position of worker wid?
+"gameid:dx:[wid]"       What's the dx position of worker wid?
 
 Then I can store these using Redis sets: each gameid can be a set, and any
 key that's added to the database is also added to the set. So invoke sadd:
 r.sadd('gameid', 'gameid:key:tag') whenever you set a key/value pair. And
 since sets ignore duplicates, no check is needed!
+
+### Full data model
+gameid:lastcmd          Last valid command that triggered game state change
+gameid:active:[wid]     Is Worker[wid] active? "yes" or "no"
+gameid:x:[wid]          Current xpos of [wid]
+gameid:y:[wid]          Current ypos of [wid]
+gameid:dx:[wid]         Desired xpos of [wid]
+gameid:dy:[wid]         Desired ypos of [wid]
