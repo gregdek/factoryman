@@ -1,7 +1,7 @@
 ## TODO
 
-- [ ] Add function "store values" that does set and sadd with gameid + list
 - [ ] Write game loop
+- [ ] Add function "store values" that does set and sadd with gameid + list
 - [ ] Write command: hire
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
