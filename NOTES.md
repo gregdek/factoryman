@@ -88,3 +88,5 @@ gameid:W:[wid]:x        Current xpos of [wid]
 gameid:W:[wid]:y        Current ypos of [wid]
 gameid:W:[wid]:dx       Desired xpos of [wid]
 gameid:W:[wid]:dy       Desired ypos of [wid]
+gameid:W:[wid]:cid      Attached cid, if any
+gameid:W:[wid]:mid      Attached mid, if any

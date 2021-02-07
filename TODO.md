@@ -1,10 +1,16 @@
 ## TODO
 
-- [ ] Write game loop
+- [ ] Write "gamestatefmt" function
 - [ ] Add function "store values" that does set and sadd with gameid + list
+- [ ] Write actual code for basic game loop with user movement
+- [ ] Write map output function
 - [ ] Write command: hire
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
+- [ ] Capture full game history into DB for replay ability
+- [ ] Introduce auto-cart K?
+- [ ] Introduce robot-machine R?
+- [x] Write pseudocode for full game loop
 - [x] Write command: worker move
 - [x] Recast output from byte to str
 - [x] Send response as HTML
