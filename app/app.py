@@ -95,7 +95,7 @@ def command(commandid, gameid):
   if not ("ERROR" in returnstr):
     
     # First, build map for collision detection and lists for iteration.
-    workercount = 0
+    workerid = 0
     # I'm sure there's a better way to do this, but this is comprehensible:
     gamemap=[
       ['__','__','__','__','__','__','__','__','__','__'],
@@ -111,14 +111,16 @@ def command(commandid, gameid):
     ]
     # We will keep the gamemap simple, because when paired with
     # the game status, client comprehension should be easy
-    #while workercount < gameid:W:count
-    #  if exists W:cid:
-    #    gamemap[worker's X][worker's Y]='WC'
-    #  elif exists W:mid:
-    #     gamemap[worker's X][worker's Y]='WM'
-    #   else:
-    #     gamemap[worker's X][worker's Y]='W_'
-    #   workercount++  
+    while workerid < int(r.get(gameid+":W:count")):
+      wx = int(r.get(gameid+":W:"+str(workerid)+":x"))
+      wy = int(r.get(gameid+":W:"+str(workerid)+":y"))
+      if r.exists(gameid+":W:cid"):
+        gamemap[wx][wy]="WC"
+      elif r.exists(gameid+":W:mid"):
+        gamemap[wx][wy]="WM"
+      else:
+        gamemap[wx][wy]="W_"
+      workerid+=1 
 
     # Now iterate through workers and assess attach/detach moves.
     # FIXME.
@@ -147,7 +149,23 @@ def command(commandid, gameid):
     # FIXME. 
     
     # Finally, get formatted game state and set returnstr.
-    # FIXME. For now, just note that command was accepted.
-    returnstr = commandid+'-->'+gameid
+    # Return the map first.
+    returnstr = '<pre>'
+    for gmx in range(0,10):
+      for gmy in range(0,10):
+        returnstr+=gamemap[gmx][gmy]+" "
+      returnstr+="<br/>"
+    returnstr+="<br/>"
+    returnstr+="</pre>"
+
+    if r.exists(gameid):
+      gamestateset = r.smembers(gameid)
+      for gamestateitem in gamestateset:
+        returnstr += "<p>"
+        returnstr += str(gamestateitem)
+        returnstr += "---"
+        returnstr += str(r.get(gamestateitem))
+        returnstr += "</p>"
+        #print(gamestatestr, file=sys.stderr)
 
   return returnstr, {'Content-Type': 'text/html'} 

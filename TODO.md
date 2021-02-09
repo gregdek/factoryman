@@ -1,8 +1,7 @@
 ## TODO
 
-- [ ] Write "gamestatefmt" function
-- [ ] Add function "store values" that does set and sadd with gameid + list
 - [ ] Write actual code for basic game loop with user movement
+- [ ] Add function "store values" that does set and sadd with gameid + list
 - [ ] Write map output function
 - [ ] Write command: hire
 - [ ] Kube: retest deploy to make sure all is well
