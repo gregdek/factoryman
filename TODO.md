@@ -1,6 +1,6 @@
 ## TODO
 
-- [ ] Write actual code for basic game loop with user movement
+- [ ] Get uppercase out of the model
 - [ ] Add function "store values" that does set and sadd with gameid + list
 - [ ] Write map output function
 - [ ] Write command: hire
@@ -10,6 +10,7 @@
 - [ ] Set up venv
 - [ ] Introduce auto-cart K?
 - [ ] Introduce robot-machine R?
+- [x] Write actual code for basic game loop with user movement
 - [x] Write pseudocode for full game loop
 - [x] Write command: worker move
 - [x] Recast output from byte to str

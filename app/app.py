@@ -34,9 +34,9 @@ def newgame():
   r.set(gameid+":W:0:y", "0")
   r.set(gameid+":W:0:dx", "0")
   r.set(gameid+":W:0:dy", "0")
-  r.sadd(gameid, gameid+":cash", gameid+":W:count", gameid+"W:0:active")
-  r.sadd(gameid, gameid+"W:0:x", gameid+":W:0:y")
-  r.sadd(gameid, gameid+"W:0:dx", gameid+"W:0:dy")
+  r.sadd(gameid, gameid+":cash", gameid+":W:count", gameid+":W:0:active")
+  r.sadd(gameid, gameid+":W:0:x", gameid+":W:0:y")
+  r.sadd(gameid, gameid+":W:0:dx", gameid+":W:0:dy")
 
   # FIXME: just return the newgameid for now, but figure out how to 
   # return game state also
@@ -95,7 +95,7 @@ def command(commandid, gameid):
   if not ("ERROR" in returnstr):
     
     # First, build map for collision detection and lists for iteration.
-    workerid = 0
+    w = 0
     # I'm sure there's a better way to do this, but this is comprehensible:
     gamemap=[
       ['__','__','__','__','__','__','__','__','__','__'],
@@ -111,39 +111,59 @@ def command(commandid, gameid):
     ]
     # We will keep the gamemap simple, because when paired with
     # the game status, client comprehension should be easy
-    while workerid < int(r.get(gameid+":W:count")):
-      wx = int(r.get(gameid+":W:"+str(workerid)+":x"))
-      wy = int(r.get(gameid+":W:"+str(workerid)+":y"))
+    while w < int(r.get(gameid+":W:count")):
+      wx = int(r.get(gameid+":W:"+str(w)+":x"))
+      wy = int(r.get(gameid+":W:"+str(w)+":y"))
       if r.exists(gameid+":W:cid"):
         gamemap[wx][wy]="WC"
       elif r.exists(gameid+":W:mid"):
         gamemap[wx][wy]="WM"
       else:
         gamemap[wx][wy]="W_"
-      workerid+=1 
+      w+=1 
 
     # Now iterate through workers and assess attach/detach moves.
     # FIXME.
 
     # Now iterate through workers and try to move them.
-    # For each worker, if w.active and w.xy<>w.dxdy:
-    #   Compute destination square based on DX/DY.
-    #   If they are holding nothing:
-    #     If "W" not in destination square:
-    #       Move them in DB.
-    #     Else:
-    #       Do not move them.
-    #       Warn: can not move W; destination blocked by W
-    #   Elif they are attached, i.e. exists w:cid or w:mid:
-    #     If "W" in destination square:
-    #       Do not move them.
-    #       Warn: can not move W; destination blocked by W
-    #     Elif "M" or "C" in destination square:
-    #       Do not move them.
-    #       Throw warning: can not move W while holding M/C; blocked by M/C
-    #     Else:
-    #       Move them in DB.
-    #       Move attached C or M in DB.
+    # reset w to 0 again
+    w = 0
+    # For each worker:
+    while w < int(r.get(gameid+":W:count")):
+      wx = int(r.get(gameid+":W:"+str(w)+":x"))
+      wy = int(r.get(gameid+":W:"+str(w)+":y"))
+      wdx = int(r.get(gameid+":W:"+str(w)+":dx"))
+      wdy = int(r.get(gameid+":W:"+str(w)+":dy"))
+      wactive = r.get(gameid+":W:"+str(w)+":active")
+      if wactive == 'yes' and ((wx!=wdx) or (wy!=wdy)):
+        if wx < wdx: wx+=1
+        if wx > wdx: wx-=1
+        if wy < wdy: wy+=1
+        if wy > wdy: wy-=1
+        # For now, it's simple: is there a W at target?
+        # If so, move. 
+        if 'W' not in gamemap[wx][wy]:
+          r.set(gameid+":W:"+str(w)+":x",wx)
+          r.set(gameid+":W:"+str(w)+":y",wy)
+      w+=1
+          # FIXME: sort out future logic as below
+          # Compute destination square based on DX/DY.
+          #   If they are holding nothing:
+          #     If "W" not in destination square:
+          #       Move them in DB.
+          #     Else:
+          #       Do not move them.
+          #       Warn: can not move W; destination blocked by W
+          #   Elif they are attached, i.e. exists w:cid or w:mid:
+          #     If "W" in destination square:
+          #       Do not move them.
+          #       Warn: can not move W; destination blocked by W
+          #     Elif "M" or "C" in destination square:
+          #       Do not move them.
+          #       Throw warning: can not move W holding M/C; blocked by M/C
+      #     Else:
+      #       Move them in DB.
+      #       Move attached C or M in DB.
 
     # Now process machines and carts.
     # FIXME. 
