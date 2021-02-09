@@ -82,11 +82,11 @@ since sets ignore duplicates, no check is needed!
 
 ### Full data model
 gameid:lastcmd          Last valid command that triggered game state change
-gameid:W:count          Number of total workers 
-gameid:W:[wid]:active   Is Worker[wid] active? "yes" or "no"
-gameid:W:[wid]:x        Current xpos of [wid]
-gameid:W:[wid]:y        Current ypos of [wid]
-gameid:W:[wid]:dx       Desired xpos of [wid]
-gameid:W:[wid]:dy       Desired ypos of [wid]
-gameid:W:[wid]:cid      Attached cid, if any
-gameid:W:[wid]:mid      Attached mid, if any
+gameid:w:count          Number of total workers 
+gameid:w:[wid]:active   Is Worker[wid] active? "yes" or "no"
+gameid:w:[wid]:x        Current xpos of [wid]
+gameid:w:[wid]:y        Current ypos of [wid]
+gameid:w:[wid]:dx       Desired xpos of [wid]
+gameid:w:[wid]:dy       Desired ypos of [wid]
+gameid:w:[wid]:cid      Attached cid, if any
+gameid:w:[wid]:mid      Attached mid, if any

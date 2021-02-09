@@ -28,15 +28,15 @@ def newgame():
   # "set" starting values, and "sadd" values to Redis set for gameid.
   # TODO: put these into a newworker function.
   r.set(gameid+":cash", "5000")
-  r.set(gameid+":W:count", "1")
-  r.set(gameid+":W:0:active", "yes")
-  r.set(gameid+":W:0:x", "0")
-  r.set(gameid+":W:0:y", "0")
-  r.set(gameid+":W:0:dx", "0")
-  r.set(gameid+":W:0:dy", "0")
-  r.sadd(gameid, gameid+":cash", gameid+":W:count", gameid+":W:0:active")
-  r.sadd(gameid, gameid+":W:0:x", gameid+":W:0:y")
-  r.sadd(gameid, gameid+":W:0:dx", gameid+":W:0:dy")
+  r.set(gameid+":w:count", "1")
+  r.set(gameid+":w:0:active", "yes")
+  r.set(gameid+":w:0:x", "0")
+  r.set(gameid+":w:0:y", "0")
+  r.set(gameid+":w:0:dx", "0")
+  r.set(gameid+":w:0:dy", "0")
+  r.sadd(gameid, gameid+":cash", gameid+":w:count", gameid+":w:0:active")
+  r.sadd(gameid, gameid+":w:0:x", gameid+":w:0:y")
+  r.sadd(gameid, gameid+":w:0:dx", gameid+":w:0:dy")
 
   # FIXME: just return the newgameid for now, but figure out how to 
   # return game state also
@@ -75,12 +75,12 @@ def command(commandid, gameid):
     dx=commandid[5]
     dy=commandid[6]
     # Is the player active?
-    if r.get(gameid+":W:"+wid+":active") == "yes":
+    if r.get(gameid+":w:"+wid+":active") == "yes":
       # Are x and y in bounds?
       if (0<=int(dx)<=9) and (0<=int(dy)<=9): 
         # Valid. Set destination and last command.
-        r.set(gameid+":W:"+wid+":dx", dx)
-        r.set(gameid+":W:"+wid+":dy", dy)
+        r.set(gameid+":w:"+wid+":dx", dx)
+        r.set(gameid+":w:"+wid+":dy", dy)
         r.set(gameid+":lastcmd",commandid)
       else:
         returnstr = "ERROR " + commandid + ": invalid xy"
@@ -111,15 +111,15 @@ def command(commandid, gameid):
     ]
     # We will keep the gamemap simple, because when paired with
     # the game status, client comprehension should be easy
-    while w < int(r.get(gameid+":W:count")):
-      wx = int(r.get(gameid+":W:"+str(w)+":x"))
-      wy = int(r.get(gameid+":W:"+str(w)+":y"))
-      if r.exists(gameid+":W:cid"):
-        gamemap[wx][wy]="WC"
-      elif r.exists(gameid+":W:mid"):
-        gamemap[wx][wy]="WM"
+    while w < int(r.get(gameid+":w:count")):
+      wx = int(r.get(gameid+":w:"+str(w)+":x"))
+      wy = int(r.get(gameid+":w:"+str(w)+":y"))
+      if r.exists(gameid+":w:cid"):
+        gamemap[wx][wy]="wc"
+      elif r.exists(gameid+":w:mid"):
+        gamemap[wx][wy]="wm"
       else:
-        gamemap[wx][wy]="W_"
+        gamemap[wx][wy]="w_"
       w+=1 
 
     # Now iterate through workers and assess attach/detach moves.
@@ -129,38 +129,38 @@ def command(commandid, gameid):
     # reset w to 0 again
     w = 0
     # For each worker:
-    while w < int(r.get(gameid+":W:count")):
-      wx = int(r.get(gameid+":W:"+str(w)+":x"))
-      wy = int(r.get(gameid+":W:"+str(w)+":y"))
-      wdx = int(r.get(gameid+":W:"+str(w)+":dx"))
-      wdy = int(r.get(gameid+":W:"+str(w)+":dy"))
-      wactive = r.get(gameid+":W:"+str(w)+":active")
+    while w < int(r.get(gameid+":w:count")):
+      wx = int(r.get(gameid+":w:"+str(w)+":x"))
+      wy = int(r.get(gameid+":w:"+str(w)+":y"))
+      wdx = int(r.get(gameid+":w:"+str(w)+":dx"))
+      wdy = int(r.get(gameid+":w:"+str(w)+":dy"))
+      wactive = r.get(gameid+":w:"+str(w)+":active")
       if wactive == 'yes' and ((wx!=wdx) or (wy!=wdy)):
         if wx < wdx: wx+=1
         if wx > wdx: wx-=1
         if wy < wdy: wy+=1
         if wy > wdy: wy-=1
-        # For now, it's simple: is there a W at target?
+        # For now, it's simple: is there a w at target?
         # If so, move. 
-        if 'W' not in gamemap[wx][wy]:
-          r.set(gameid+":W:"+str(w)+":x",wx)
-          r.set(gameid+":W:"+str(w)+":y",wy)
+        if 'w' not in gamemap[wx][wy]:
+          r.set(gameid+":w:"+str(w)+":x",wx)
+          r.set(gameid+":w:"+str(w)+":y",wy)
       w+=1
           # FIXME: sort out future logic as below
           # Compute destination square based on DX/DY.
           #   If they are holding nothing:
-          #     If "W" not in destination square:
+          #     If "w" not in destination square:
           #       Move them in DB.
           #     Else:
           #       Do not move them.
-          #       Warn: can not move W; destination blocked by W
+          #       Warn: can not move w; destination blocked by w
           #   Elif they are attached, i.e. exists w:cid or w:mid:
-          #     If "W" in destination square:
+          #     If "w" in destination square:
           #       Do not move them.
-          #       Warn: can not move W; destination blocked by W
+          #       Warn: can not move w; destination blocked by w
           #     Elif "M" or "C" in destination square:
           #       Do not move them.
-          #       Throw warning: can not move W holding M/C; blocked by M/C
+          #       Throw warning: can not move w holding M/C; blocked by M/C
       #     Else:
       #       Move them in DB.
       #       Move attached C or M in DB.
