@@ -8,6 +8,7 @@
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
 - [ ] Capture full game history into DB for replay ability
+- [ ] Set up venv
 - [ ] Introduce auto-cart K?
 - [ ] Introduce robot-machine R?
 - [x] Write pseudocode for full game loop

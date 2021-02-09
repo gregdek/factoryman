@@ -75,12 +75,12 @@ def command(commandid, gameid):
     dx=commandid[5]
     dy=commandid[6]
     # Is the player active?
-    if r.get(gameid+"W:"+wid+":active") == "yes":
+    if r.get(gameid+":W:"+wid+":active") == "yes":
       # Are x and y in bounds?
       if (0<=int(dx)<=9) and (0<=int(dy)<=9): 
         # Valid. Set destination and last command.
-        r.set(gameid+"W:"+wid+":dx", dx)
-        r.set(gameid+"W:"+wid+":dy", dy)
+        r.set(gameid+":W:"+wid+":dx", dx)
+        r.set(gameid+":W:"+wid+":dy", dy)
         r.set(gameid+":lastcmd",commandid)
       else:
         returnstr = "ERROR " + commandid + ": invalid xy"
@@ -95,26 +95,26 @@ def command(commandid, gameid):
   if not ("ERROR" in returnstr):
     
     # First, build map for collision detection and lists for iteration.
-    # workercount = 0
+    workercount = 0
     # I'm sure there's a better way to do this, but this is comprehensible:
-    # gamemap=[
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    #   ['__','__','__','__','__','__','__','__','__','__'],
-    # ]
+    gamemap=[
+      ['__','__','__','__','__','__','__','__','__','__'],
+      ['__','__','__','__','__','__','__','__','__','__'],
+      ['__','__','__','__','__','__','__','__','__','__'],
+      ['__','__','__','__','__','__','__','__','__','__'],
+      ['__','__','__','__','__','__','__','__','__','__'],
+      ['__','__','__','__','__','__','__','__','__','__'],
+      ['__','__','__','__','__','__','__','__','__','__'],
+      ['__','__','__','__','__','__','__','__','__','__'],
+      ['__','__','__','__','__','__','__','__','__','__'],
+      ['__','__','__','__','__','__','__','__','__','__'],
+    ]
     # We will keep the gamemap simple, because when paired with
     # the game status, client comprehension should be easy
-    # while workercount < gameid:W:count
-    #   if exists W:cid:
-    #     gamemap[worker's X][worker's Y]='WC'
-    #   elif exists W:mid:
+    #while workercount < gameid:W:count
+    #  if exists W:cid:
+    #    gamemap[worker's X][worker's Y]='WC'
+    #  elif exists W:mid:
     #     gamemap[worker's X][worker's Y]='WM'
     #   else:
     #     gamemap[worker's X][worker's Y]='W_'
