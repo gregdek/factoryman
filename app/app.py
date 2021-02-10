@@ -7,6 +7,8 @@ import pprint
 import uuid
 import redis
 import sys
+# helper functions like collisions, etc.
+import helper
 
 app = Flask(__name__)
 app.debug = True
@@ -17,9 +19,13 @@ redis_port = 6379
 redis_password = ""
 r = redis.StrictRedis('localhost', 6379, charset="utf-8", decode_responses=True)
 
+#----------------------------------------------------------------------
+
 @app.route('/')
 def index():
   return 'This will point to a link to start a new game!'
+
+#----------------------------------------------------------------------
 
 @app.route('/newgame')
 def newgame():
@@ -34,30 +40,22 @@ def newgame():
   r.set(gameid+":w:0:y", "0")
   r.set(gameid+":w:0:dx", "0")
   r.set(gameid+":w:0:dy", "0")
-  r.sadd(gameid, gameid+":cash", gameid+":w:count", gameid+":w:0:active")
-  r.sadd(gameid, gameid+":w:0:x", gameid+":w:0:y")
-  r.sadd(gameid, gameid+":w:0:dx", gameid+":w:0:dy")
 
   # FIXME: just return the newgameid for now, but figure out how to 
   # return game state also
   return gameid, {'Content-Type': 'text/html'}
 
+#----------------------------------------------------------------------
+
 @app.route('/state/<gameid>')
 def state(gameid):
-  returnstr = ''
-  if r.exists(gameid):
-    gamestateset = r.smembers(gameid)
-    for gamestateitem in gamestateset:
-      returnstr += "<p>"
-      returnstr += str(gamestateitem)
-      returnstr += "---"
-      returnstr += str(r.get(gamestateitem))
-      returnstr += "</p>"
-      #print(gamestatestr, file=sys.stderr)
+  if r.exists(gameid+":cash"):
+    returnstr = helper.gamestatestr(gameid)
   else:
-    returnstr = 'Error: gameid not found'
+    returnstr = "Error: gameid not found: " + gameid
   return returnstr, {'Content-Type': 'text/html'}
 
+#----------------------------------------------------------------------
 @app.route('/command/<commandid>/<gameid>')
 def command(commandid, gameid):
   returnstr = ''
@@ -65,10 +63,12 @@ def command(commandid, gameid):
   # a valid command, then triggers the game loop.
 
   # PROCESS COMMAND
+  #-------------------------------------------------------- 
   # Is it a wait? If so, do nothing but set lastcmd.
   if 'wait' in commandid:
     # Do nothing, set lastcmd
     r.set(gameid+":lastcmd",commandid)
+  #-------------------------------------------------------- 
   # Is it a move? Make sure it's valid, otherwise error.
   elif 'move' in commandid:
     wid=commandid[4]
@@ -86,6 +86,27 @@ def command(commandid, gameid):
         returnstr = "ERROR " + commandid + ": invalid xy"
     else:
       returnstr = "ERROR " + commandid + ": worker "+wid+" invalid/inactive" 
+  #-------------------------------------------------------- 
+  # Is it a hire? Make sure money is available and no worker is on 0,0;
+  # otherwise error.
+  elif 'hire' in commandid:
+    # Does the player have enough money?
+    cash=int(r.get(gameid+":cash"))
+    if cash>=1000:
+      # player has enough money, is there a w on 0,0?
+      if helper.workerat(gameid,"0","0")=="no":
+        helper.addworker(gameid,"0","0")
+        r.set(gameid+":cash", str(cash-1000))
+      else:
+        returnstr = "ERROR " + commandid + ": worker already present at (0,0)"
+    else:
+      returnstr = "ERROR " + commandid + ": not enough cash, hire costs 1000"
+  #-------------------------------------------------------- 
+  # elif 'blah' in commandid:
+  #   ...and so on.
+  #-------------------------------------------------------- 
+  # All valid commands exhausted. Set the returnstr and
+  # skip the game loop.
   else:
     returnstr = "ERROR: invalid command: " +commandid  
 
@@ -178,14 +199,6 @@ def command(commandid, gameid):
     returnstr+="<br/>"
     returnstr+="</pre>"
 
-    if r.exists(gameid):
-      gamestateset = r.smembers(gameid)
-      for gamestateitem in gamestateset:
-        returnstr += "<p>"
-        returnstr += str(gamestateitem)
-        returnstr += "---"
-        returnstr += str(r.get(gamestateitem))
-        returnstr += "</p>"
-        #print(gamestatestr, file=sys.stderr)
+    returnstr += helper.gamestatestr(gameid)
 
   return returnstr, {'Content-Type': 'text/html'} 

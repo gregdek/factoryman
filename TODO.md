@@ -1,15 +1,22 @@
 ## TODO
 
-- [ ] Get uppercase out of the model
+- [ ] Write helper.gamemapstr
+- [ ] Replace game loop functions with helper collision functions
+- [ ] Replace game loop map return with helper map return function
+- [ ] Bug: why does move command not immediately move player in game loop?
 - [ ] Add function "store values" that does set and sadd with gameid + list
 - [ ] Write map output function
-- [ ] Write command: hire
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
-- [ ] Capture full game history into DB for replay ability
+- [ ] Capture full game history into DB for replay/CI ability
 - [ ] Set up venv
 - [ ] Introduce auto-cart K?
 - [ ] Introduce robot-machine R?
+- [x] Write helper.errlog
+- [x] Replace sadd/smember with helper.gamestatestr
+- [x] Write helper functions: workerat(x,y), machineat(x,y), cartat(x,y)
+- [x] Write hire command and helper.addworker
+- [x] Get uppercase out of the model
 - [x] Write actual code for basic game loop with user movement
 - [x] Write pseudocode for full game loop
 - [x] Write command: worker move

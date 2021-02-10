@@ -81,9 +81,14 @@ r.sadd('gameid', 'gameid:key:tag') whenever you set a key/value pair. And
 since sets ignore duplicates, no check is needed!
 
 ### Full data model
+gameid:cash             Player cash available
 gameid:lastcmd          Last valid command that triggered game state change
 gameid:w:count          Number of total workers 
-gameid:w:[wid]:active   Is Worker[wid] active? "yes" or "no"
+gameid:m:count          Number of total machines
+gameid:c:count          Number of total carts
+gameid:w:[wid]:active   Is worker[wid] active? "yes" or "no"
+gameid:m:[mid]:active   Is machine[mid] active? "yes" or "no"
+gameid:c:[cid]:active   Is cart[cid] active? "yes" or "no"
 gameid:w:[wid]:x        Current xpos of [wid]
 gameid:w:[wid]:y        Current ypos of [wid]
 gameid:w:[wid]:dx       Desired xpos of [wid]
