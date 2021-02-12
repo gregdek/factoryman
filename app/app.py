@@ -62,6 +62,7 @@ def command(commandid, gameid):
   # Command triggers the game and, on accepting
   # a valid command, then triggers the game loop.
 
+  #-------------------------------------------------------- 
   # PROCESS COMMAND
   #-------------------------------------------------------- 
   # Is it a wait? If so, do nothing but set lastcmd.
@@ -110,44 +111,15 @@ def command(commandid, gameid):
   else:
     returnstr = "ERROR: invalid command: " +commandid  
 
+  #-------------------------------------------------------- 
   # GAME LOOP
+  #-------------------------------------------------------- 
   # OK, commands have been processed. If not error has
   # been found in the command, run the game loop.
+
   if not ("ERROR" in returnstr):
-    
-    # First, build map for collision detection and lists for iteration.
-    w = 0
-    # I'm sure there's a better way to do this, but this is comprehensible:
-    gamemap=[
-      ['__','__','__','__','__','__','__','__','__','__'],
-      ['__','__','__','__','__','__','__','__','__','__'],
-      ['__','__','__','__','__','__','__','__','__','__'],
-      ['__','__','__','__','__','__','__','__','__','__'],
-      ['__','__','__','__','__','__','__','__','__','__'],
-      ['__','__','__','__','__','__','__','__','__','__'],
-      ['__','__','__','__','__','__','__','__','__','__'],
-      ['__','__','__','__','__','__','__','__','__','__'],
-      ['__','__','__','__','__','__','__','__','__','__'],
-      ['__','__','__','__','__','__','__','__','__','__'],
-    ]
-    # We will keep the gamemap simple, because when paired with
-    # the game status, client comprehension should be easy
-    while w < int(r.get(gameid+":w:count")):
-      wx = int(r.get(gameid+":w:"+str(w)+":x"))
-      wy = int(r.get(gameid+":w:"+str(w)+":y"))
-      if r.exists(gameid+":w:cid"):
-        gamemap[wx][wy]="wc"
-      elif r.exists(gameid+":w:mid"):
-        gamemap[wx][wy]="wm"
-      else:
-        gamemap[wx][wy]="w_"
-      w+=1 
 
-    # Now iterate through workers and assess attach/detach moves.
-    # FIXME.
-
-    # Now iterate through workers and try to move them.
-    # reset w to 0 again
+    # First, iterate through workers and try to move them.
     w = 0
     # For each worker:
     while w < int(r.get(gameid+":w:count")):
@@ -162,43 +134,37 @@ def command(commandid, gameid):
         if wy < wdy: wy+=1
         if wy > wdy: wy-=1
         # For now, it's simple: is there a w at target?
-        # If so, move. 
-        if 'w' not in gamemap[wx][wy]:
-          r.set(gameid+":w:"+str(w)+":x",wx)
-          r.set(gameid+":w:"+str(w)+":y",wy)
-      w+=1
-          # FIXME: sort out future logic as below
-          # Compute destination square based on DX/DY.
-          #   If they are holding nothing:
-          #     If "w" not in destination square:
-          #       Move them in DB.
-          #     Else:
-          #       Do not move them.
-          #       Warn: can not move w; destination blocked by w
-          #   Elif they are attached, i.e. exists w:cid or w:mid:
-          #     If "w" in destination square:
-          #       Do not move them.
-          #       Warn: can not move w; destination blocked by w
-          #     Elif "M" or "C" in destination square:
-          #       Do not move them.
-          #       Throw warning: can not move w holding M/C; blocked by M/C
+        # If not, move. 
+        if helper.workerat(gameid,wx,wy)=="no":
+            r.set(gameid+":w:"+str(w)+":x",wx)
+            r.set(gameid+":w:"+str(w)+":y",wy)
+      w += 1
+
+      # FIXME: Now iterate through workers and assess attach/detach moves.
+      # FIXME: sort out future logic as below
+      # Compute destination square based on DX/DY.
+      #   If they are holding nothing:
+      #     If "w" not in destination square:
+      #       Move them in DB.
+      #     Else:
+      #       Do not move them.
+      #       Warn: can not move w; destination blocked by w
+      #   Elif they are attached, i.e. exists w:cid or w:mid:
+      #     If "w" in destination square:
+      #       Do not move them.
+      #       Warn: can not move w; destination blocked by w
+      #     Elif "M" or "C" in destination square:
+      #       Do not move them.
+      #       Throw warning: can not move w holding M/C; blocked by M/C
       #     Else:
       #       Move them in DB.
       #       Move attached C or M in DB.
 
-    # Now process machines and carts.
-    # FIXME. 
+      # Now process machines and carts.
+      # FIXME. 
     
-    # Finally, get formatted game state and set returnstr.
-    # Return the map first.
-    returnstr = '<pre>'
-    for gmx in range(0,10):
-      for gmy in range(0,10):
-        returnstr+=gamemap[gmx][gmy]+" "
-      returnstr+="<br/>"
-    returnstr+="<br/>"
-    returnstr+="</pre>"
-
+    # Now return the map and status.
+    returnstr += helper.gamemapstr(gameid)
     returnstr += helper.gamestatestr(gameid)
 
   return returnstr, {'Content-Type': 'text/html'} 

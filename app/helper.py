@@ -9,6 +9,7 @@ redis_password = ""
 r = redis.StrictRedis('localhost', 6379, charset="utf-8", decode_responses=True)
 
 def workerat(gameid,x,y):
+    # Returns "no" if none, otherwise returns the workerid
     workeratxy="no"
     w = 0
     while w < int(r.get(gameid+":w:count")):
@@ -16,7 +17,7 @@ def workerat(gameid,x,y):
       wy = int(r.get(gameid+":w:"+str(w)+":y"))
       wactive = r.get(gameid+":w:"+str(w)+":active")
       if (wactive == "yes") and int(x)==int(wx) and int(y)==int(wy):
-        workeratxy="yes"
+        workeratxy=str(w)
       w += 1
     return workeratxy
 
@@ -81,7 +82,21 @@ def gamestatestr(gameid):
 def gamemapstr(gameid):
     # Return a formatted map representing items on the map.
     # For now, default to HTML.
-    return "OK"
+    returnstr = '<pre>'                                                         
+    for gmx in range(0,10):
+      for gmy in range(0,10):
+        # Default: empty
+        mapstr="____"
+        # If there's a worker, place the worker
+        wid=workerat(gameid,gmx,gmy)
+        if wid != "no":
+          mapstr="w" + str(wid) + "__"
+        # FIXME: if there's a cart or machine, add it too
+        returnstr += mapstr + " "
+      returnstr+="<br/>"
+    returnstr+="<br/>"
+    returnstr+="</pre>"
+    return returnstr
 
 def errlog(errstr):
     print(errstr,file=sys.stderr)

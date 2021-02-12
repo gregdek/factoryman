@@ -1,17 +1,17 @@
 ## TODO
 
-- [ ] Write helper.gamemapstr
-- [ ] Replace game loop functions with helper collision functions
-- [ ] Replace game loop map return with helper map return function
-- [ ] Bug: why does move command not immediately move player in game loop?
-- [ ] Add function "store values" that does set and sadd with gameid + list
-- [ ] Write map output function
-- [ ] Kube: retest deploy to make sure all is well
-- [ ] Kube: figure out ingress to filter out garbage requests
+- [ ] Add "buym" and machine collision code
 - [ ] Capture full game history into DB for replay/CI ability
 - [ ] Set up venv
 - [ ] Introduce auto-cart K?
 - [ ] Introduce robot-machine R?
+- [ ] Kube: retest deploy to make sure all is well
+- [ ] Kube: figure out ingress to filter out garbage requests
+- [x] Write map output function
+- [x] Replace game loop map return with helper map return function
+- [x] Bug: why does move command not immediately move player in game loop?
+- [x] Replace game loop functions with helper collision functions
+- [x] Write helper.gamemapstr
 - [x] Write helper.errlog
 - [x] Replace sadd/smember with helper.gamestatestr
 - [x] Write helper functions: workerat(x,y), machineat(x,y), cartat(x,y)
