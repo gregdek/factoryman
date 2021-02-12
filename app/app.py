@@ -35,6 +35,8 @@ def newgame():
   # TODO: put these into a newworker function.
   r.set(gameid+":cash", "5000")
   r.set(gameid+":w:count", "1")
+  r.set(gameid+":m:count", "0")
+  r.set(gameid+":c:count", "0")
   r.set(gameid+":w:0:active", "yes")
   r.set(gameid+":w:0:x", "0")
   r.set(gameid+":w:0:y", "0")
@@ -66,11 +68,13 @@ def command(commandid, gameid):
   # PROCESS COMMAND
   #-------------------------------------------------------- 
   # Is it a wait? If so, do nothing but set lastcmd.
+  #-------------------------------------------------------- 
   if 'wait' in commandid:
     # Do nothing, set lastcmd
     r.set(gameid+":lastcmd",commandid)
   #-------------------------------------------------------- 
   # Is it a move? Make sure it's valid, otherwise error.
+  #-------------------------------------------------------- 
   elif 'move' in commandid:
     wid=commandid[4]
     dx=commandid[5]
@@ -88,8 +92,9 @@ def command(commandid, gameid):
     else:
       returnstr = "ERROR " + commandid + ": worker "+wid+" invalid/inactive" 
   #-------------------------------------------------------- 
-  # Is it a hire? Make sure money is available and no worker is on 0,0;
-  # otherwise error.
+  # Is it a hire? Make sure money is available and no 
+  # worker is on 0,0; otherwise error.
+  #-------------------------------------------------------- 
   elif 'hire' in commandid:
     # Does the player have enough money?
     cash=int(r.get(gameid+":cash"))
@@ -103,6 +108,53 @@ def command(commandid, gameid):
     else:
       returnstr = "ERROR " + commandid + ": not enough cash, hire costs 1000"
   #-------------------------------------------------------- 
+  # Is it a buym? Make sure money is available and no 
+  # worker is on 0,0; otherwise error.
+  #-------------------------------------------------------- 
+  elif 'buym' in commandid:
+    # Does the player have enough money?
+    cash=int(r.get(gameid+":cash"))
+    if cash>=1000:
+      # player has enough money, is there an m or c on 0,0?
+      if (
+        (helper.machineat(gameid,"0","0")=="no") and
+        (helper.cartat(gameid,"0","0")=="no")
+      ):
+        helper.addmachine(gameid,"0","0")
+        r.set(gameid+":cash", str(cash-1000))
+      else:
+        returnstr = "ERROR " + commandid + ": object already present at (0,0)"
+    else:
+      returnstr = "ERROR " + commandid + ": not enough cash, buym costs 1000"
+  #--------------------------------------------------------
+  # Is it an attw? attw is a toggle. If something is
+  # attached, detach it. If nothing is attached and 
+  # something is present to attach, then attach, otherwise
+  # silently fail.
+  #-------------------------------------------------------- 
+  elif 'att' in commandid:
+    wid=commandid[3]
+    # get w coordinates, and machineat and cartat for coordinates
+    wx = r.get(gameid+":w:"+wid+":x")
+    wy = r.get(gameid+":w:"+wid+":y")
+    mat = helper.machineat(gameid,wx,wy)
+    cat = helper.cartat(gameid,wx,wy)
+    # if machine is attached, detach
+    if r.exists(gameid+":w:"+wid+":mid"):
+      r.delete(gameid+":w:"+wid+":mid")
+    # elif cart is attached, detach
+    elif r.exists(gameid+":w:"+wid+":cid"):
+      r.delete(gameid+":w:"+wid+":cid")
+    # elif machineat, attach machine
+    elif mat != "no":
+      r.set(gameid+":w:"+wid+":mid", mat)
+    # elif cartat, attach cart
+    elif cat != "no":
+      r.set(gameid+":w:"+wid+":cid", cat)
+    # else pass, maybe add an error later
+    else:
+      pass
+  #--------------------------------------------------------
   # elif 'blah' in commandid:
   #   ...and so on.
   #-------------------------------------------------------- 
@@ -133,9 +185,30 @@ def command(commandid, gameid):
         if wx > wdx: wx-=1
         if wy < wdy: wy+=1
         if wy > wdy: wy-=1
-        # For now, it's simple: is there a w at target?
-        # If not, move. 
-        if helper.workerat(gameid,wx,wy)=="no":
+        # Full rules:
+        # If there is an m attached:
+        if r.exists(gameid+":w:"+str(w)+":mid"):
+          # set m to attached
+          m = r.get(gameid+":w:"+str(w)+":mid")
+          # If there is no w-at and no m-at and no c-at target:
+          if (
+            helper.machineat(gameid,wx,wy)=="no" and
+            helper.cartat(gameid,wx,wy)=="no" and
+            helper.workerat(gameid,wx,wy)=="no"
+          ):
+          # move w, move m.
+            r.set(gameid+":w:"+str(w)+":x",wx)
+            r.set(gameid+":w:"+str(w)+":y",wy)
+            r.set(gameid+":m:"+str(m)+":x",wx)
+            r.set(gameid+":m:"+str(m)+":y",wy)
+            
+        # elsif there is a c attached:
+        #   If there is no w-at and no m-at and no c-at target:
+        #     move w, move c.
+        # elsif there is nothing attached: 
+        #   If there is no w-at target:
+        #     move w.
+        elif helper.workerat(gameid,wx,wy)=="no":
             r.set(gameid+":w:"+str(w)+":x",wx)
             r.set(gameid+":w:"+str(w)+":y",wy)
       w += 1

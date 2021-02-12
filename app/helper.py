@@ -25,11 +25,11 @@ def machineat(gameid,x,y):
     machineatxy="no"
     m = 0
     while m < int(r.get(gameid+":m:count")):
-      mx = int(r.get(gameid+":m:"+str(w)+":x"))
-      my = int(r.get(gameid+":m:"+str(w)+":y"))
-      mactive = r.get(gameid+":m:"+str(w)+":active")
+      mx = int(r.get(gameid+":m:"+str(m)+":x"))
+      my = int(r.get(gameid+":m:"+str(m)+":y"))
+      mactive = r.get(gameid+":m:"+str(m)+":active")
       if (mactive == "yes") and int(x)==int(mx) and int(y)==int(my):
-        machineatxy="yes"
+        machineatxy=str(m)
       m += 1
     return machineatxy
 
@@ -41,7 +41,7 @@ def cartat(gameid,x,y):
       cy = int(r.get(gameid+":c:"+str(w)+":y"))
       cactive = r.get(gameid+":c:"+str(w)+":active")
       if (cactive == "yes") and int(x)==int(cx) and int(y)==int(cy):
-        cartatxy="yes"
+        cartatxy=str(c)
       c += 1
     return cartatxy
 
@@ -55,6 +55,18 @@ def addworker(gameid,x,y):
     wcount += 1
     #errlog("WARN: wcount is "+str(wcount))
     r.set(gameid+":w:count",str(wcount))
+    return
+
+def addmachine(gameid,x,y):
+    mcount = int(r.get(gameid+":m:count"))
+    r.set(gameid+":m:"+str(mcount)+":x", str(x))
+    r.set(gameid+":m:"+str(mcount)+":y", str(y))
+    r.set(gameid+":m:"+str(mcount)+":dx", str(x))
+    r.set(gameid+":m:"+str(mcount)+":dy", str(y))
+    r.set(gameid+":m:"+str(mcount)+":active", "yes")
+    mcount += 1
+    #errlog("WARN: wcount is "+str(wcount))
+    r.set(gameid+":m:count",str(mcount))
     return
 
 def gamestatestr(gameid):
@@ -92,6 +104,19 @@ def gamemapstr(gameid):
         if wid != "no":
           mapstr="w" + str(wid) + "__"
         # FIXME: if there's a cart or machine, add it too
+        mid=machineat(gameid,gmx,gmy)
+        if mid != "no":
+          if "w" in mapstr:
+            # if w and m are attached, put m first
+            if r.exists(gameid+":w:"+str(wid)+":mid"):
+              mapstr="m" + str(mid) + "w" + str(wid)
+            # else put w first
+            else:
+              mapstr="w" + str(wid) + "m" + str(mid)
+
+          else:
+            mapstr="m" + str(mid) + "__" 
+        # Add this tile to the map
         returnstr += mapstr + " "
       returnstr+="<br/>"
     returnstr+="<br/>"

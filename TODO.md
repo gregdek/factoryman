@@ -1,12 +1,19 @@
 ## TODO
 
-- [ ] Add "buym" and machine collision code
+- [ ] Add "buyc" and cart creation code
+- [ ] Add worker/cart attach/detach code to command loop
+- [ ] Add cart move code to game loop
+- [ ] Add error checking for various command inputs
+- [ ] Write command entry form
 - [ ] Capture full game history into DB for replay/CI ability
 - [ ] Set up venv
 - [ ] Introduce auto-cart K?
 - [ ] Introduce robot-machine R?
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
+- [x] Add worker/machine attach/detach code to command loop
+- [x] Add machine move code to game loop
+- [x] Add "buym" and machine creation code
 - [x] Write map output function
 - [x] Replace game loop map return with helper map return function
 - [x] Bug: why does move command not immediately move player in game loop?
