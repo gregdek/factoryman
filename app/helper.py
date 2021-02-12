@@ -1,5 +1,4 @@
 # Helper functions for Factoryman
-# Assumes that you've already imported Flask, is this true?
 
 import sys
 import redis
@@ -37,9 +36,9 @@ def cartat(gameid,x,y):
     cartatxy="no"
     c = 0
     while c < int(r.get(gameid+":c:count")):
-      cx = int(r.get(gameid+":c:"+str(w)+":x"))
-      cy = int(r.get(gameid+":c:"+str(w)+":y"))
-      cactive = r.get(gameid+":c:"+str(w)+":active")
+      cx = int(r.get(gameid+":c:"+str(c)+":x"))
+      cy = int(r.get(gameid+":c:"+str(c)+":y"))
+      cactive = r.get(gameid+":c:"+str(c)+":active")
       if (cactive == "yes") and int(x)==int(cx) and int(y)==int(cy):
         cartatxy=str(c)
       c += 1
@@ -69,26 +68,50 @@ def addmachine(gameid,x,y):
     r.set(gameid+":m:count",str(mcount))
     return
 
+def addcart(gameid,x,y):
+    ccount = int(r.get(gameid+":c:count"))
+    r.set(gameid+":c:"+str(ccount)+":x", str(x))
+    r.set(gameid+":c:"+str(ccount)+":y", str(y))
+    r.set(gameid+":c:"+str(ccount)+":dx", str(x))
+    r.set(gameid+":c:"+str(ccount)+":dy", str(y))
+    r.set(gameid+":c:"+str(ccount)+":active", "yes")
+    ccount += 1
+    r.set(gameid+":c:count",str(ccount))
+    return 
+
 def gamestatestr(gameid):
     # Return a formatted set of values representing gamestate.
     # For now, default to HTML.
     # Return worker count and list of workers x/y/active/cid/mid.
-    w = 0
     rstr = gameid+":cash --> " + r.get(gameid+":cash") + "<br/>"
     rstr += gameid+":lastcmd --> " + r.get(gameid+":lastcmd") + "<br/>"
     rstr += gameid+":w:count --> " + r.get(gameid+":w:count") + "<br/>"
+    rstr += gameid+":m:count --> " + r.get(gameid+":m:count") + "<br/>"
+    rstr += gameid+":c:count --> " + r.get(gameid+":c:count") + "<br/>"
+    w = 0
     while w < int(r.get(gameid+":w:count")):
        basestr = str(gameid+":w:"+str(w)+":")
        rstr += basestr+"x --> " + r.get(basestr+"x") + "<br/>"
-       #rstr += basestr+"x --> " + r.get(gameid+":w:0:x") + "<br/>"
        rstr += basestr+"y --> " + r.get(basestr+"y") + "<br/>"
        rstr += basestr+"dx --> " + r.get(basestr+"dx") + "<br/>"
        rstr += basestr+"dy --> " + r.get(basestr+"dy") + "<br/>"
        rstr += basestr+"active --> " + r.get(basestr+"active") + "<br/>"
        w += 1
-        
-    # FIXME: Return machine count (if any) and list of machines x/y/active
-    # FIXME: Return cart count (if any) and list of carts x/y/active.
+    c = 0
+    while c < int(r.get(gameid+":c:count")):
+       basestr = str(gameid+":c:"+str(c)+":")
+       rstr += basestr+"x --> " + r.get(basestr+"x") + "<br/>"
+       rstr += basestr+"y --> " + r.get(basestr+"y") + "<br/>"
+       rstr += basestr+"active --> " + r.get(basestr+"active") + "<br/>"
+       c += 1
+    m = 0
+    while m < int(r.get(gameid+":m:count")):
+       basestr = str(gameid+":m:"+str(m)+":")
+       rstr += basestr+"x --> " + r.get(basestr+"x") + "<br/>"
+       rstr += basestr+"y --> " + r.get(basestr+"y") + "<br/>"
+       rstr += basestr+"active --> " + r.get(basestr+"active") + "<br/>"
+       m += 1
+ 
     return rstr
 
 def gamemapstr(gameid):
@@ -97,13 +120,16 @@ def gamemapstr(gameid):
     returnstr = '<pre>'                                                         
     for gmx in range(0,10):
       for gmy in range(0,10):
+
         # Default: empty
         mapstr="____"
-        # If there's a worker, place the worker
+
+        # Is there a worker? Render it
         wid=workerat(gameid,gmx,gmy)
         if wid != "no":
           mapstr="w" + str(wid) + "__"
-        # FIXME: if there's a cart or machine, add it too
+
+        # Is there a machine? Render it
         mid=machineat(gameid,gmx,gmy)
         if mid != "no":
           if "w" in mapstr:
@@ -113,9 +139,22 @@ def gamemapstr(gameid):
             # else put w first
             else:
               mapstr="w" + str(wid) + "m" + str(mid)
-
           else:
             mapstr="m" + str(mid) + "__" 
+
+        # Is there a cart ? Render it
+        cid=cartat(gameid,gmx,gmy)
+        if cid != "no":
+          if "w" in mapstr:
+            # if w and c are attached, put c first
+            if r.exists(gameid+":w:"+str(wid)+":cid"):
+              mapstr="c" + str(cid) + "w" + str(wid)
+            # else put w first
+            else:
+              mapstr="w" + str(wid) + "c" + str(cid)
+          else:
+            mapstr="c" + str(cid) + "__" 
+
         # Add this tile to the map
         returnstr += mapstr + " "
       returnstr+="<br/>"

@@ -1,8 +1,6 @@
 ## TODO
 
-- [ ] Add "buyc" and cart creation code
-- [ ] Add worker/cart attach/detach code to command loop
-- [ ] Add cart move code to game loop
+- [ ] Add commodity logic to carts
 - [ ] Add error checking for various command inputs
 - [ ] Write command entry form
 - [ ] Capture full game history into DB for replay/CI ability
@@ -11,6 +9,10 @@
 - [ ] Introduce robot-machine R?
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
+- [x] Add carts and machines to gamestate return
+- [x] Add "buyc" and cart creation code
+- [x] Add worker/cart attach/detach code to command loop
+- [x] Add cart move code to game loop
 - [x] Add worker/machine attach/detach code to command loop
 - [x] Add machine move code to game loop
 - [x] Add "buym" and machine creation code
