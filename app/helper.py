@@ -111,7 +111,12 @@ def gamestatestr(gameid):
        rstr += basestr+"y --> " + r.get(basestr+"y") + "<br/>"
        rstr += basestr+"active --> " + r.get(basestr+"active") + "<br/>"
        m += 1
- 
+    rstr += '<form action="/command">'
+    rstr += '<label for="commandid">Command:</label>'
+    rstr += '<input type="text" id="c" name="c" />'
+    rstr += '<input type="hidden" id="g" name="g" value="' + gameid + '"/>'
+    rstr += '<input type="submit" value="Submit" />'
+    rstr += '</form>'
     return rstr
 
 def gamemapstr(gameid):

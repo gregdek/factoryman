@@ -1,6 +1,7 @@
 #!/usr/local/bin/python3
 
 from flask import Flask
+from flask import request
 from flask import render_template
 from flask import Response
 import pprint
@@ -23,7 +24,7 @@ r = redis.StrictRedis('localhost', 6379, charset="utf-8", decode_responses=True)
 
 @app.route('/')
 def index():
-  return 'This will point to a link to start a new game!'
+  return 'To start a new game: <a href="newgame">newgame</a>'
 
 #----------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ def newgame():
   # "set" starting values, and "sadd" values to Redis set for gameid.
   # TODO: put these into a newworker function.
   r.set(gameid+":cash", "5000")
+  r.set(gameid+":lastcmd", "newgame")
   r.set(gameid+":w:count", "1")
   r.set(gameid+":m:count", "0")
   r.set(gameid+":c:count", "0")
@@ -45,7 +47,9 @@ def newgame():
 
   # FIXME: just return the newgameid for now, but figure out how to 
   # return game state also
-  return gameid, {'Content-Type': 'text/html'}
+  returnstr = helper.gamemapstr(gameid)
+  returnstr += helper.gamestatestr(gameid)
+  return returnstr, {'Content-Type': 'text/html'}
 
 #----------------------------------------------------------------------
 
@@ -58,8 +62,11 @@ def state(gameid):
   return returnstr, {'Content-Type': 'text/html'}
 
 #----------------------------------------------------------------------
-@app.route('/command/<commandid>/<gameid>')
-def command(commandid, gameid):
+#@app.route('/command/<commandid>/<gameid>')
+@app.route('/command')
+def command():
+  commandid=request.args.get('c')
+  gameid=request.args.get('g')
   returnstr = ''
   # Command triggers the game and, on accepting
   # a valid command, then triggers the game loop.
@@ -80,7 +87,9 @@ def command(commandid, gameid):
     dx=commandid[5]
     dy=commandid[6]
     # Is the player active?
-    if r.get(gameid+":w:"+wid+":active") == "yes":
+    active=r.get(gameid+":w:"+wid+":active")
+    helper.errlog("wid active? " + active)
+    if active == "yes":
       # Are x and y in bounds?
       if (0<=int(dx)<=9) and (0<=int(dy)<=9): 
         # Valid. Set destination and last command.

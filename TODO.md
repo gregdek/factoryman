@@ -9,6 +9,10 @@
 - [ ] Introduce robot-machine R?
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
+- [x] Add basic commands form to game state output
+- [x] Change command route to accept GET form data
+- [x] Change newgame to return game state
+- [x] Create main page link to start game
 - [x] Add carts and machines to gamestate return
 - [x] Add "buyc" and cart creation code
 - [x] Add worker/cart attach/detach code to command loop
