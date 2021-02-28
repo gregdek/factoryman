@@ -9,6 +9,8 @@
 - [ ] Introduce robot-machine R?
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
+- [x] Expand form with all game options
+- [x] Split command parser to accept two args: "command" and "value"
 - [x] Add basic commands form to game state output
 - [x] Change command route to accept GET form data
 - [x] Change newgame to return game state

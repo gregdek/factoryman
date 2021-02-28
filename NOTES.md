@@ -38,7 +38,7 @@ There are also widgets, but widgets are not objects in and of themselves; they a
     - m.y is the y position of the machine. Only changed if a worker is attached and the worker moves.
     - m.i is the input type widget that the machine accepts from an adjacent cart. Predetermined at instantiation time.
     - m.o is the output type widget that the machine puts into an adjacent cart. Predetermined at instantiation time.
-    - Machines transform widgets in adjacent cards under the following circumstances: if an adjacent cart has a c.count/c.type that matches m.input, and another adjacent cart has c.count/c.type that matches m.output, and if a W is attached to the machine, then the machine decrements the count of the input cart and increments the count of the output cart.  
+    - Machines transform widgets in adjacent cards under the following circumstances: if an adjacent cart has a c.count/c.type that matches m.input, and another adjacent cart has c.count/c.type that matches m.output, and if a w is attached to the machine, then the machine decrements the count of the input cart and increments the count of the output cart.  
     
 ### Game Commands
 - The player executes game commands. One command can be executed per turn:

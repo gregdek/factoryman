@@ -62,11 +62,11 @@ def state(gameid):
   return returnstr, {'Content-Type': 'text/html'}
 
 #----------------------------------------------------------------------
-#@app.route('/command/<commandid>/<gameid>')
 @app.route('/command')
 def command():
-  commandid=request.args.get('c')
   gameid=request.args.get('g')
+  commandid=request.args.get('c')
+  valueid=request.args.get('v')
   returnstr = ''
   # Command triggers the game and, on accepting
   # a valid command, then triggers the game loop.
@@ -83,9 +83,9 @@ def command():
   # Is it a move? Make sure it's valid, otherwise error.
   #-------------------------------------------------------- 
   elif 'move' in commandid:
-    wid=commandid[4]
-    dx=commandid[5]
-    dy=commandid[6]
+    wid=valueid[0]
+    dx=valueid[1]
+    dy=valueid[2]
     # Is the player active?
     active=r.get(gameid+":w:"+wid+":active")
     helper.errlog("wid active? " + active)
@@ -95,7 +95,7 @@ def command():
         # Valid. Set destination and last command.
         r.set(gameid+":w:"+wid+":dx", dx)
         r.set(gameid+":w:"+wid+":dy", dy)
-        r.set(gameid+":lastcmd",commandid)
+        r.set(gameid+":lastcmd",commandid+valueid)
       else:
         returnstr = "ERROR " + commandid + ": invalid xy"
     else:
@@ -161,7 +161,7 @@ def command():
   # silently fail.
   #-------------------------------------------------------- 
   elif 'att' in commandid:
-    wid=commandid[3]
+    wid=valueid[0]
     # get w coordinates, and machineat and cartat for coordinates
     wx = r.get(gameid+":w:"+wid+":x")
     wy = r.get(gameid+":w:"+wid+":y")
