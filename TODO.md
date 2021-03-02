@@ -1,6 +1,5 @@
 ## TODO
 
-- [ ] Add commodity logic to carts
 - [ ] Add error checking for various command inputs
 - [ ] Write command entry form
 - [ ] Capture full game history into DB for replay/CI ability
@@ -9,6 +8,8 @@
 - [ ] Introduce robot-machine R?
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
+- [x] Write machine processing spec
+- [x] Write cart type spec
 - [x] Expand form with all game options
 - [x] Split command parser to accept two args: "command" and "value"
 - [x] Add basic commands form to game state output
