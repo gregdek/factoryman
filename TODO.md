@@ -1,7 +1,10 @@
 ## TODO
 
+- [ ] Add new cart attributes to new cart code
+- [ ] Add new machine attributes to new machine code (all machines are a2b1)
+- [ ] Write buy code with abc prices
+- [ ] Write sell code with abc prices
 - [ ] Add error checking for various command inputs
-- [ ] Write command entry form
 - [ ] Capture full game history into DB for replay/CI ability
 - [ ] Set up venv
 - [ ] Introduce auto-cart K?
