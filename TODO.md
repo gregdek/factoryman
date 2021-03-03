@@ -1,7 +1,5 @@
 ## TODO
 
-- [ ] Add new cart attributes to new cart code
-- [ ] Add new machine attributes to new machine code (all machines are a2b1)
 - [ ] Write buy code with abc prices
 - [ ] Write sell code with abc prices
 - [ ] Add error checking for various command inputs
@@ -11,6 +9,8 @@
 - [ ] Introduce robot-machine R?
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
+- [x] Add new cart attributes to new cart code
+- [x] Add new machine attributes to new machine code (all machines are a2b1)
 - [x] Write machine processing spec
 - [x] Write cart type spec
 - [x] Expand form with all game options

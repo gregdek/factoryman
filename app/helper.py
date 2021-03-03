@@ -62,6 +62,10 @@ def addmachine(gameid,x,y):
     r.set(gameid+":m:"+str(mcount)+":y", str(y))
     r.set(gameid+":m:"+str(mcount)+":dx", str(x))
     r.set(gameid+":m:"+str(mcount)+":dy", str(y))
+    # FIXME. Later we will take as parameters; for now,
+    # we hardcode every machine's input and output type.
+    r.set(gameid+":m:"+str(mcount)+":input", "a2")
+    r.set(gameid+":m:"+str(mcount)+":output", "b1")
     r.set(gameid+":m:"+str(mcount)+":active", "yes")
     mcount += 1
     #errlog("WARN: wcount is "+str(wcount))
@@ -75,6 +79,8 @@ def addcart(gameid,x,y):
     r.set(gameid+":c:"+str(ccount)+":dx", str(x))
     r.set(gameid+":c:"+str(ccount)+":dy", str(y))
     r.set(gameid+":c:"+str(ccount)+":active", "yes")
+    r.set(gameid+":c:"+str(ccount)+":count", "0")
+    r.set(gameid+":c:"+str(ccount)+":type", "none")
     ccount += 1
     r.set(gameid+":c:count",str(ccount))
     return 
