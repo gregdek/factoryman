@@ -117,6 +117,10 @@ def gamestatestr(gameid):
        rstr += basestr+"y --> " + r.get(basestr+"y") + "<br/>"
        rstr += basestr+"active --> " + r.get(basestr+"active") + "<br/>"
        m += 1
+    rstr += 'Prices: buy:A=' + r.get("buy:A") + "/"
+    rstr += 'sell:A=' + r.get("sell:A") + "/"
+    rstr += 'buy:B=' + r.get("buy:B") + "/"
+    rstr += 'sell:B=' + r.get("sell:B") + "<br/>"
     rstr += '<form action="/command">'
     rstr += '<label for="commandid">Command:</label>'
     # rstr += 'c:<input type="text" id="c" name="c" /> '

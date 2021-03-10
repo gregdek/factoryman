@@ -1,14 +1,20 @@
 ## TODO
 
-- [ ] Write buy code with abc prices
-- [ ] Write sell code with abc prices
+- [ ] Write buyx pseudocode 
+- [ ] Write buyx code 
+- [ ] Write sellx pseudocode
+- [ ] Write sellx code
 - [ ] Add error checking for various command inputs
 - [ ] Capture full game history into DB for replay/CI ability
 - [ ] Set up venv
 - [ ] Introduce auto-cart K?
 - [ ] Introduce robot-machine R?
+- [ ] Introduce different bulk commodity prices?
 - [ ] Kube: retest deploy to make sure all is well
 - [ ] Kube: figure out ingress to filter out garbage requests
+- [x] Set commodity prices in database in separate process
+- [x] Write buyx pseudocode
+- [x] Write sellx pseudeocode 
 - [x] Add new cart attributes to new cart code
 - [x] Add new machine attributes to new machine code (all machines are a2b1)
 - [x] Write machine processing spec

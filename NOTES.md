@@ -130,6 +130,7 @@ that input, the machine operated by the player with the lower id would have
 priority.
 
 ### Full data model
+GAME SPECIFIC:
 gameid:cash             Player cash available
 gameid:lastcmd          Last valid command that triggered game state change
 gameid:w:count          Number of total workers 
@@ -148,3 +149,7 @@ gameid:c:[cid]:type     Type of good in cart, or "none"
 gameid:c:[cid]:count    Count of good in cart, 0-99
 gameid:m:[mid]:input    Input type required by machine (e.g. "1a" or "3b")
 gameid:m:[mid]:output   Output type produced by machine (e.g. "1b" or "2c")
+
+GENERAL:
+buy:A                   The cost to buy commodity A
+sell:A                  The price to sell commodity A

@@ -155,7 +155,41 @@ def command():
     else:
       returnstr = "ERROR " + commandid + ": not enough cash, buyc costs 1000"
   #--------------------------------------------------------
-  # Is it an attw? attw is a toggle. If something is
+  # Is it a buyx? Then you're buying a commodity with an
+  # argument of "type" and "count". No partial transaction
+  # allowed; a cart must be present; the type-bought must
+  # be the same as the cart's type, or the cart's type must
+  # be "none"; the count-bought plus the cart's count must
+  # not exceed 99; and the cost of the transaction must not
+  # exceed the player's cash. If all those things are true,
+  # the cart's type is set, if necessary, and its count is
+  # incremented accordingly. If any of these things are not
+  # true, or if there's no cart at (0,0), the transaction 
+  # fails and the turn is incremented.
+  #--------------------------------------------------------
+  elif 'buyx' in commandid:
+    pass
+  #--------------------------------------------------------
+  # Is it a sellx? Then you're selling whatever commodity 
+  # is in the cart at (9,9), and you're selling all of it.
+  # cart type is set to "None", cart count is set to "0",
+  # and cash is incremented accordingly. If there's no cart
+  # at (9,9) the transaction fails and the turn is 
+  # incremented.
+  #--------------------------------------------------------
+  elif 'buyx' in commandid:
+    pass
+  elif 'sellx' in commandid:
+    pass
+  #--------------------------------------------------------
+  # Is it an att? att is a toggle. If something is
+  # attached, detach it. If nothing is attached and 
+  # something is present to attach, then attach, otherwise
+  # silently fail.
+  elif 'sellx' in commandid:
+    pass
+  #--------------------------------------------------------
+  # Is it an att? att is a toggle. If something is
   # attached, detach it. If nothing is attached and 
   # something is present to attach, then attach, otherwise
   # silently fail.
